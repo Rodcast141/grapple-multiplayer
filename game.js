@@ -492,11 +492,14 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
-// Hide loading screen
-window.addEventListener('load', () => {
+// Hide loading screen and show menu
+document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
-    document.getElementById('loadingScreen').style.display = 'none';
-  }, 2000);
+    const loadingScreen = document.getElementById('loadingScreen');
+    const mainMenu = document.getElementById('mainMenu');
+    if (loadingScreen) loadingScreen.style.display = 'none';
+    if (mainMenu) mainMenu.classList.add('active');
+  }, 1500);
 });
 
 // Export functions
