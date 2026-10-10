@@ -1,6 +1,6 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@r160/build/three.module.js';
-import { VRButton } from 'https://cdn.jsdelivr.net/npm/three@r160/examples/jsm/webxr/VRButton.js';
-import { XRControllerModelFactory } from 'https://cdn.jsdelivr.net/npm/three@r160/examples/jsm/webxr/XRControllerModelFactory.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { VRButton } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/webxr/VRButton.js';
+import { XRControllerModelFactory } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/webxr/XRControllerModelFactory.js';
 
 // Game State
 const gameState = {
@@ -44,7 +44,6 @@ const shopItems = [
   { id: 'vip-pack', name: '1000 Coins', emoji: '💰💰💰', type: 'currency', price: 1000, amount: 1000 }
 ];
 
-// UI Handlers
 function startGame() {
   hideAllMenus();
   gameState.currentScreen = 'game';
@@ -58,33 +57,29 @@ function startGame() {
 
 function openShop() {
   hideAllMenus();
-  gameState.currentScreen = 'shop';
   renderShop();
   document.getElementById('shopMenu').classList.add('active');
 }
 
 function openCustomization() {
   hideAllMenus();
-  gameState.currentScreen = 'customization';
   renderCustomization();
   document.getElementById('customizationMenu').classList.add('active');
 }
 
 function openLeaderboard() {
   hideAllMenus();
-  gameState.currentScreen = 'leaderboard';
   renderLeaderboard();
   document.getElementById('leaderboardMenu').classList.add('active');
 }
 
 function backToMenu() {
   hideAllMenus();
-  gameState.currentScreen = 'menu';
   document.getElementById('mainMenu').classList.add('active');
 }
 
 function returnToMenu() {
-  if (renderer && renderer.xr.isPresenting) {
+  if (renderer && renderer.xr && renderer.xr.isPresenting) {
     renderer.xr.getSession().end();
   }
   backToMenu();
@@ -220,7 +215,7 @@ function purchaseOGBundle() {
 }
 
 function exitGame() {
-  if (renderer && renderer.xr.isPresenting) {
+  if (renderer && renderer.xr && renderer.xr.isPresenting) {
     renderer.xr.getSession().end();
   }
   returnToMenu();
@@ -234,41 +229,35 @@ function retryLevel() {
   startGame();
 }
 
-// Three.js Setup
 let scene, camera, renderer;
-let player, grappleHook, grapplePoint;
+let player, grappleHook, grappleTarget;
 let isGrappling = false;
-let grappleTarget = null;
-let grappleRope;
 
 function initGame() {
-  // Scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0a0e27);
   scene.fog = new THREE.Fog(0x0a0e27, 100, 200);
 
-  // Camera
   camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.set(0, 2, 5);
 
-  // Player
   player = new THREE.Group();
   player.position.set(0, 2, 0);
   player.add(camera);
   scene.add(player);
 
-  // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
   renderer.xr.enabled = true;
-  document.getElementById('gameContainer').innerHTML = '';
-  document.getElementById('gameContainer').appendChild(renderer.domElement);
+
+  const gameContainer = document.getElementById('gameContainer');
+  gameContainer.innerHTML = '';
+  gameContainer.appendChild(renderer.domElement);
 
   document.body.appendChild(VRButton.createButton(renderer));
 
-  // Lighting
   const ambientLight = new THREE.HemisphereLight(0x667eea, 0x764ba2, 1.5);
   scene.add(ambientLight);
 
@@ -279,23 +268,15 @@ function initGame() {
   directionalLight.shadow.mapSize.height = 2048;
   scene.add(directionalLight);
 
-  // Create Level
   createLevel();
-
-  // Grapple Hook
   createGrappleHook();
-
-  // VR Controllers
   setupVRControllers();
-
-  // Start render loop
   renderer.setAnimationLoop(animate);
 }
 
 function createGrappleHook() {
   const hookGroup = new THREE.Group();
 
-  // Hook mesh
   const hookGeometry = new THREE.BoxGeometry(0.2, 0.3, 0.1);
   const hookMaterial = new THREE.MeshStandardMaterial({
     color: 0xff006e,
@@ -308,7 +289,6 @@ function createGrappleHook() {
   hookMesh.castShadow = true;
   hookGroup.add(hookMesh);
 
-  // Glow
   const glowGeometry = new THREE.SphereGeometry(0.35, 16, 16);
   const glowMaterial = new THREE.MeshBasicMaterial({
     color: 0x00d9ff,
@@ -324,7 +304,6 @@ function createGrappleHook() {
 }
 
 function createLevel() {
-  // Ground
   const groundGeometry = new THREE.PlaneGeometry(500, 500);
   const groundMaterial = new THREE.MeshStandardMaterial({
     color: 0x1a1f3a,
@@ -336,7 +315,6 @@ function createLevel() {
   ground.position.y = -5;
   scene.add(ground);
 
-  // Platforms with grapple points
   const platformPositions = [
     { x: 0, y: 0, z: 20 },
     { x: 15, y: 5, z: 40 },
@@ -347,12 +325,11 @@ function createLevel() {
     { x: 0, y: 15, z: 140 }
   ];
 
-  platformPositions.forEach((pos, idx) => {
+  platformPositions.forEach((pos) => {
     createPlatform(pos.x, pos.y, pos.z, 3, 0.5, 3);
     createGrapplePoint(pos.x, pos.y + 2, pos.z);
   });
 
-  // Finish line
   const finishGeometry = new THREE.BoxGeometry(8, 1, 3);
   const finishMaterial = new THREE.MeshStandardMaterial({
     color: 0x4ade80,
@@ -417,7 +394,7 @@ function onControllerSelectStart(event) {
   controller.getWorldPosition(position);
 }
 
-function onControllerSelectEnd(event) {
+function onControllerSelectEnd() {
   isGrappling = false;
 }
 
