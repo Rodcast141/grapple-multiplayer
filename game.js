@@ -1,6 +1,6 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-import { VRButton } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/webxr/VRButton.js';
-import { XRControllerModelFactory } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/webxr/XRControllerModelFactory.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@r160/build/three.module.js';
+import { VRButton } from 'https://cdn.jsdelivr.net/npm/three@r160/examples/jsm/webxr/VRButton.js';
+import { XRControllerModelFactory } from 'https://cdn.jsdelivr.net/npm/three@r160/examples/jsm/webxr/XRControllerModelFactory.js';
 
 // Game State
 const gameState = {
@@ -415,7 +415,6 @@ function onControllerSelectStart(event) {
   const controller = event.target;
   const position = new THREE.Vector3();
   controller.getWorldPosition(position);
-  // Raycast to find grapple point
 }
 
 function onControllerSelectEnd(event) {
@@ -423,12 +422,10 @@ function onControllerSelectEnd(event) {
 }
 
 function updatePlayerMovement() {
-  // Gravity
   player.velocity = player.velocity || new THREE.Vector3();
-  player.velocity.y -= 0.02; // Gravity
+  player.velocity.y -= 0.02;
   player.position.add(player.velocity);
 
-  // Ground collision
   if (player.position.y < 0) {
     player.position.y = 0;
     player.velocity.y = 0;
@@ -492,7 +489,6 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
-// Hide loading screen and show menu
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     const loadingScreen = document.getElementById('loadingScreen');
@@ -502,7 +498,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 1500);
 });
 
-// Export functions
 window.startGame = startGame;
 window.openShop = openShop;
 window.openCustomization = openCustomization;
