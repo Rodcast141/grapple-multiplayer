@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grapple Infinity - VR Multiplayer</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loader">
+            <div class="spinner"></div>
+            <p>Loading Grapple Infinity</p>
+        </div>
+    </div>
+
+    <div id="mainMenu" class="menu-screen active">
+        <div class="menu-container">
+            <div class="logo">
+                <h1>GRAPPLE INFINITY</h1>
+                <p class="tagline">Multiplayer VR Swing Racing</p>
+            </div>
+
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="startGame()">ENTER VR</button>
+                <button class="btn btn-secondary" onclick="openShop()">SHOP</button>
+                <button class="btn btn-secondary" onclick="openCustomization()">CUSTOMIZE</button>
+                <button class="btn btn-secondary" onclick="openLeaderboard()">LEADERBOARD</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customizationMenu" class="menu-screen">
+        <div class="menu-container">
+            <h2>CHARACTER CUSTOMIZATION</h2>
+            <div class="customization-grid">
+                <div class="customization-section">
+                    <h3>Skins</h3>
+                    <div class="skin-grid" id="skinGrid"></div>
+                </div>
+                <div class="customization-section">
+                    <h3>Grapple Hooks</h3>
+                    <div class="hook-grid" id="hookGrid"></div>
+                </div>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn btn-secondary" onclick="backToMenu()">BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="shopMenu" class="menu-screen">
+        <div class="menu-container">
+            <h2>COSMETIC SHOP</h2>
+            <div class="shop-header">
+                <div class="coin-display">
+                    <span class="coin-icon">💰</span>
+                    <span id="coinCount">1000</span> Coins
+                </div>
+            </div>
+
+            <div class="shop-grid" id="shopGrid"></div>
+
+            <div class="og-bundle" onclick="purchaseOGBundle()">
+                <div class="bundle-header">OG BUNDLE - LIMITED</div>
+                <div class="bundle-content">
+                    <p>Exclusive Early Access Bundle</p>
+                    <ul>
+                        <li>✓ Neon Genesis Skin</li>
+                        <li>✓ Plasma Grapple Hook</li>
+                        <li>✓ 500 Bonus Coins</li>
+                        <li>✓ Badge of Honor</li>
+                    </ul>
+                    <div class="bundle-price">250 Coins</div>
+                </div>
+            </div>
+
+            <div class="menu-buttons">
+                <button class="btn btn-secondary" onclick="backToMenu()">BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="leaderboardMenu" class="menu-screen">
+        <div class="menu-container">
+            <h2>GLOBAL LEADERBOARD</h2>
+            <div id="leaderboardContent" class="leaderboard-content"></div>
+            <div class="menu-buttons">
+                <button class="btn btn-secondary" onclick="backToMenu()">BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameContainer"></div>
+
+    <div id="gameHUD" class="game-hud hidden">
+        <div class="hud-panel top-left">
+            <div class="hud-item">
+                <span class="label">TIME</span>
+                <span class="value" id="hudTime">00:00</span>
+            </div>
+            <div class="hud-item">
+                <span class="label">SPEED</span>
+                <span class="value" id="hudSpeed">0</span>
+            </div>
+        </div>
+
+        <div class="hud-panel top-right">
+            <div class="hud-item">
+                <span class="label">PLAYERS</span>
+                <span class="value" id="hudPlayers">1/4</span>
+            </div>
+            <div class="hud-item">
+                <span class="label">COINS</span>
+                <span class="value" id="hudCoins">0</span>
+            </div>
+        </div>
+
+        <div class="hud-panel center-bottom">
+            <div id="grappleIndicator" class="grapple-indicator">
+                <div class="crosshair"></div>
+                <div class="crosshair-text">READY TO GRAPPLE</div>
+            </div>
+        </div>
+
+        <div class="hud-panel bottom-left">
+            <button class="btn-small" onclick="toggleMap()">MAP</button>
+            <button class="btn-small" onclick="exitGame()">EXIT (ESC)</button>
+        </div>
+    </div>
+
+    <div id="finishScreen" class="finish-screen hidden">
+        <div class="finish-container">
+            <h1>LEVEL COMPLETE!</h1>
+            <div class="finish-stats">
+                <div class="stat">
+                    <span class="label">TIME</span>
+                    <span class="value" id="finishTime">00:00</span>
+                </div>
+                <div class="stat">
+                    <span class="label">COINS EARNED</span>
+                    <span class="value" id="finishCoins">0</span>
+                </div>
+                <div class="stat">
+                    <span class="label">RANK</span>
+                    <span class="value" id="finishRank">#1</span>
+                </div>
+            </div>
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="returnToMenu()">MENU</button>
+                <button class="btn btn-secondary" onclick="retryLevel()">RETRY</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./game.js"></script>
+</body>
+</html>
